@@ -48,7 +48,9 @@ def create_app(test_config=None):
                 "deleted": actor_id,
                 "success": True
             })
-        except Exception:
+        except Exception as e:
+            if e.code == 404:
+                abort(404)
             abort(422)
 
     @app.route('/movies/<int:movie_id>/delete', methods=["DELETE"])
@@ -64,7 +66,9 @@ def create_app(test_config=None):
                 "deleted": movie_id,
                 "success": True
             })
-        except Exception:
+        except Exception as e:
+            if e.code == 404:
+                abort(404)
             abort(422)
 
     @app.route('/actors/create', methods=["POST"])
@@ -108,14 +112,14 @@ def create_app(test_config=None):
             })
 
         except Exception:
-            abort(404)
+            abort(422)
 
     @app.route('/actors/<int:actor_id>/edit', methods=["PATCH"])
     def edit_actors(actor_id):
         try:
             actor = Actor.query.filter(Actor.id == actor_id).one_or_none()
-
-            if actor == None:
+            
+            if not actor:
                 abort(404)
             
             body = request.get_json()
@@ -131,7 +135,9 @@ def create_app(test_config=None):
                 "success": True
             })
 
-        except Exception:
+        except Exception as e:
+            if e.code == 404:
+                abort(404)
             abort(422)
 
     @app.route('/movies/<int:movie_id>/edit', methods=["PATCH"])
@@ -155,7 +161,9 @@ def create_app(test_config=None):
                 "success": True
             })
             
-        except Exception:
+        except Exception as e:
+            if e.code == 404:
+                abort(404)
             abort(422)
 
 

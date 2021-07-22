@@ -83,6 +83,14 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(data['total_actors'], 5)
         self.assertTrue(data['actors'])
 
+    def test_405_making_post_request_on_get_actors(self):
+        res = self.client().post('/actors')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 405)
+        self.assertEqual(data['message'], 'method not allowed')
+        self.assertFalse(data['success'])
+
     def test_get_movies(self):
         res = self.client().get('/movies')
         data = json.loads(res.data)
@@ -92,6 +100,14 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(data['total_movies'], 4)
         self.assertTrue(data['movies'])
 
+    def test_405_making_delete_request_on_get_movies(self):
+        res = self.client().delete('/movies')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 405)
+        self.assertEqual(data['message'], 'method not allowed')
+        self.assertFalse(data['success'])
+
     def test_delete_actors(self):
         res = self.client().delete('/actors/2/delete')
         data = json.loads(res.data)
@@ -99,6 +115,14 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['deleted'], 2)
         self.assertTrue(data['success'])
+
+    def test_404_delete_none_existing_actor(self):
+        res = self.client().delete('/actors/10/delete')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['message'], "resource not found")
+        self.assertFalse(data['success'])
 
     def test_delete_movies(self):
         res = self.client().delete('/movies/2/delete')
@@ -108,6 +132,14 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(data['deleted'], 2)
         self.assertTrue(data['success'])
 
+    def test_405_making_get_request_for_delete(self):
+        res = self.client().get('/movies/3/delete')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 405)
+        self.assertEqual(data['message'], "method not allowed")
+        self.assertFalse(data['success'])
+
     def test_create_actor(self):
         res = self.client().post('/actors/create', json=self.new_actor)
         data = json.loads(res.data)
@@ -116,6 +148,14 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(data['actor'], 6)
         self.assertTrue(data['success'])
 
+    def test_422_invalid_json_for_actor(self):
+        res = self.client().post('/actors/create', json={"title": "Romeo"})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['message'], "unprocessable")
+        self.assertFalse(data['success'])
+
     def test_create_movie(self):
         res = self.client().post('/movies/create', json=self.new_movie)
         data = json.loads(res.data)
@@ -123,6 +163,54 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['movie'], 5)
         self.assertTrue(data['success'])
+
+    def test_422_invalid_json_for_movie(self):
+        res = self.client().post('/movies/create', json={"titles": "titles"}) 
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['message'], 'unprocessable')
+        self.assertFalse(data['success'])
+
+    def test_edit_actor(self):
+        res = self.client().patch('/actors/1/edit', json={'name':"Santa", "age":11})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(len(data['actor']), 4)
+        self.assertEqual(data['actor']['id'], 1)
+        self.assertEqual(data['actor']['name'], "Santa")
+        self.assertEqual(data['actor']['age'], 11)
+        self.assertEqual(data['actor']['gender'], "male")
+        self.assertTrue(data['actor'])
+        self.assertTrue(data['success'])
+
+    def test_404_edit_invalid_actor(self):
+        res = self.client().patch('/actors/11/edit', json={'name':"Santa", "age":11})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['message'], 'resource not found')
+        self.assertFalse(data['success'])
+
+    def test_edit_movie(self):
+        res = self.client().patch('/movies/4/edit', json={'title':"Jurassic Park 2"})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(len(data['movie']), 3)
+        self.assertEqual(data['movie']['id'], 4)
+        self.assertEqual(data['movie']['title'], "Jurassic Park 2")
+        self.assertEqual(data['movie']['release_date'], "Fri, 07 May 2021 00:00:00 GMT")
+        self.assertTrue(data['success'])
+
+    def test_404_edit_invalid_movie(self):
+        res = self.client().patch('/movies/40/edit', json={'title':"Jurassic Park 2"})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['message'], "resource not found")
+        self.assertFalse(data['success'])
 
 if __name__ == '__main__':
     unittest.main()
