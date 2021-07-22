@@ -25,8 +25,30 @@ class Movie(db.Model):
 
     id = Column(Integer, primary_key=True)
     title = Column(String, nullable=False)
-    release_date = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
+    release_date = Column(DateTime, nullable=False, default=datetime.datetime.now)
     actors = db.relationship('Actor', secondary=cast_list, backref=db.backref('movies', lazy=True))
+
+    def __init__(self, title, release_date=datetime.datetime.now):
+        self.title = title
+        self.release_date = release_date
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def format(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'release_date': self.release_date
+        }
 
 
 class Actor(db.Model):
@@ -36,3 +58,28 @@ class Actor(db.Model):
     name = Column(String, nullable=False)
     age = Column(Integer, nullable=False)
     gender = Column(String, nullable=False)
+
+    def __init__(self, name, age, gender):
+        self.name=name
+        self.age=age
+        self.gender=gender
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def format(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'age': self.age,
+            'gender': self.gender
+        }
+    
