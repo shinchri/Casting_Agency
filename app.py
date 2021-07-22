@@ -5,6 +5,8 @@ from flask_cors import CORS
 from models import setup_db, Actor, Movie
 import datetime
 
+from auth import AuthError, requires_auth
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
@@ -199,6 +201,14 @@ def create_app(test_config=None):
             "error": 422,
             "message": "unprocessable"
         }), 422
+
+    @app.errorhandler(AuthError)
+    def authorization_error(error):
+        return jsonify({
+            "success": False,
+            "error": error.error['code'],
+            "message": error.error['description']
+        }), error.status_code
 
     return app
 
