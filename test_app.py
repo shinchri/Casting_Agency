@@ -27,7 +27,8 @@ class CapstoneTestCase(unittest.TestCase):
         self.app = create_app()
         self.client = self.app.test_client
         self.database_path = os.environ['DATABASE_URL_TEST'].replace('postgres://', 'postgresql://')
-        setup_db(self.app, self.database_path)
+        database = setup_db(self.app, self.database_path)
+        database.create_all()
 
         self.new_actor = {
             'name': "Karen",
@@ -43,9 +44,9 @@ class CapstoneTestCase(unittest.TestCase):
         with self.app.app_context():
             self.db = SQLAlchemy()
             self.db.init_app(self.app)
-            self.db.create_all()
             self.db.session.execute('ALTER SEQUENCE "movie_id_seq" RESTART WITH 1')
             self.db.session.execute('ALTER SEQUENCE "actor_id_seq" RESTART WITH 1')
+            #self.db.create_all()
 
             for movie in movies:
                 obj = Movie(title=movie['title'], release_date=movie['release_date'])
@@ -90,6 +91,8 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertEqual(data['total_movies'], 4)
         self.assertTrue(data['movies'])
+
+    
 
 if __name__ == '__main__':
     unittest.main()

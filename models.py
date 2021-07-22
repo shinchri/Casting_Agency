@@ -13,6 +13,7 @@ def setup_db(app, database_path=database_path):
     app.config["SQLALCEHMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
+    return db
 
 
 cast_list = db.Table('cast_list',
@@ -23,7 +24,7 @@ cast_list = db.Table('cast_list',
 class Movie(db.Model):
     #__tablename__ = 'Movies'
 
-    id = Column(Integer, Sequence('movie_id_seq'), primary_key=True)
+    id = Column(Integer, primary_key=True)
     title = Column(String, nullable=False)
     release_date = Column(DateTime, nullable=True, default=datetime.datetime.now)
     actors = db.relationship('Actor', secondary=cast_list, backref=db.backref('movies', lazy=True))
@@ -54,7 +55,7 @@ class Movie(db.Model):
 class Actor(db.Model):
     #__tablename__ = 'Actors'
 
-    id = Column(Integer, Sequence('actor_id_seq'), primary_key=True)
+    id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     age = Column(Integer, nullable=False)
     gender = Column(String, nullable=False)

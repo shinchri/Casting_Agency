@@ -1,8 +1,8 @@
 """created sequences for resources
 
-Revision ID: 80310983cb4b
+Revision ID: aee9eee919cd
 Revises: c06e8b6487c2
-Create Date: 2021-07-22 12:56:49.340249
+Create Date: 2021-07-22 13:11:39.676394
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = '80310983cb4b'
+revision = 'aee9eee919cd'
 down_revision = 'c06e8b6487c2'
 branch_labels = None
 depends_on = None
