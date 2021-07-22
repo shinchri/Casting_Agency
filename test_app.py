@@ -46,7 +46,7 @@ class CapstoneTestCase(unittest.TestCase):
             self.db.init_app(self.app)
             self.db.session.execute('ALTER SEQUENCE "movie_id_seq" RESTART WITH 1')
             self.db.session.execute('ALTER SEQUENCE "actor_id_seq" RESTART WITH 1')
-            #self.db.create_all()
+            self.db.create_all()
 
             for movie in movies:
                 obj = Movie(title=movie['title'], release_date=movie['release_date'])
@@ -92,7 +92,37 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(data['total_movies'], 4)
         self.assertTrue(data['movies'])
 
-    
+    def test_delete_actors(self):
+        res = self.client().delete('/actors/2/delete')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['deleted'], 2)
+        self.assertTrue(data['success'])
+
+    def test_delete_movies(self):
+        res = self.client().delete('/movies/2/delete')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['deleted'], 2)
+        self.assertTrue(data['success'])
+
+    def test_create_actor(self):
+        res = self.client().post('/actors/create', json=self.new_actor)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['actor'], 6)
+        self.assertTrue(data['success'])
+
+    def test_create_movie(self):
+        res = self.client().post('/movies/create', json=self.new_movie)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['movie'], 5)
+        self.assertTrue(data['success'])
 
 if __name__ == '__main__':
     unittest.main()

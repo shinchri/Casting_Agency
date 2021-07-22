@@ -81,7 +81,8 @@ def create_app(test_config=None):
             actor.insert()
 
             return jsonify({
-                "success": True
+                "success": True,
+                "actor": actor.id
             })
         except Exception:
             abort(422)
@@ -102,7 +103,8 @@ def create_app(test_config=None):
             movie.insert()
 
             return jsonify({
-                "success": True
+                "success": True,
+                "movie": movie.id
             })
 
         except Exception:
