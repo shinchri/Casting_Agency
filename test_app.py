@@ -83,6 +83,14 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(data['total_actors'], 5)
         self.assertTrue(data['actors'])
 
+    def test_404_invalid_page_actors(self):
+        res = self.client().get('/actors?page=2')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['message'], "resource not found")
+        self.assertFalse(data['success'])
+
     def test_405_making_post_request_on_get_actors(self):
         res = self.client().post('/actors')
         data = json.loads(res.data)
@@ -99,6 +107,14 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertEqual(data['total_movies'], 4)
         self.assertTrue(data['movies'])
+
+    def test_404_invalid_page_movies(self):
+        res = self.client().get('/movies?page=2')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['message'], "resource not found")
+        self.assertFalse(data['success'])
 
     def test_405_making_delete_request_on_get_movies(self):
         res = self.client().delete('/movies')
