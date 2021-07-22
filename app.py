@@ -7,6 +7,8 @@ import datetime
 
 from auth import AuthError, requires_auth
 
+RES_PER_PAGE = 10
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
@@ -21,7 +23,13 @@ def create_app(test_config=None):
 
     @app.route('/actors', methods=["GET"])
     def get_actors():
-        actors = Actor.query.order_by(Actor.id).all()
+        selected_page = request.args.get('page', 1, type=int)
+        current_index = selected_page - 1
+        actors = Actor.query.order_by(Actor.id).limit(RES_PER_PAGE).offset(current_index*RES_PER_PAGE).all()
+
+        if len(actors) == 0:
+            abort(404)
+
         return jsonify({
             "actors": [actor.format() for actor in actors],
             "total_actors": len(Actor.query.all()),
@@ -30,7 +38,13 @@ def create_app(test_config=None):
     
     @app.route('/movies', methods=["GET"])
     def get_movies():
-        movies = Movie.query.order_by(Movie.id).all()
+        selected_page = request.args.get('page', 1, type=int)
+        current_index = selected_page - 1
+        movies = Movie.query.order_by(Movie.id).limit(RES_PER_PAGE).offset(current_index*RES_PER_PAGE).all()
+
+        if len(movies) == 0:
+            abort(404)
+            
         return jsonify({
             "movies": [movie.format() for movie in movies],
             "total_movies": len(Movie.query.all()),
