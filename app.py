@@ -3,12 +3,19 @@ from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from models import setup_db, Actor, Movie
+import datetime
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
     setup_db(app)
-    CORS(app)
+    CORS(app, origins=["*"])
+
+    @app.after_request
+    def after_request(response):
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,true')
+        response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,PATCH,DELETE,OPTIONS')
+        return response
 
     @app.route('/actors', methods=["GET"])
     def get_actors():
@@ -31,7 +38,7 @@ def create_app(test_config=None):
     @app.route('/actors/<int:actor_id>/delete', methods=["DELETE"])
     def delete_actors(actor_id):
         try:
-            actor = Actor.query.filter(Actor.id == actor_id).get_or_none()
+            actor = Actor.query.filter(Actor.id == actor_id).one_or_none()
             if actor == None:
                 abort(404)
 
@@ -47,7 +54,7 @@ def create_app(test_config=None):
     @app.route('/movies/<int:movie_id>/delete', methods=["DELETE"])
     def delete_movies(movie_id):
         try:
-            movie = Movie.query.filter(Movie.id == movie_id).get_or_none()
+            movie = Movie.query.filter(Movie.id == movie_id).one_or_none()
             if movie == None:
                 abort(404)
 
@@ -88,9 +95,9 @@ def create_app(test_config=None):
 
         try:
             if new_release_date == None:
-                movie = Movie(new_title)
+                movie = Movie(new_title, datetime.datetime.utcnow())
             else:
-                movie = Movie()
+                movie = Movie(new_title, new_release_date)
 
             movie.insert()
 
@@ -141,7 +148,7 @@ def create_app(test_config=None):
 
             movie.update()
 
-            jsonify({
+            return jsonify({
                 "movie": movie.format(),
                 "success": True
             })

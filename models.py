@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, create_engine
+from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, create_engine, Sequence
 from flask_sqlalchemy import SQLAlchemy
 import json
 import os
@@ -23,9 +23,9 @@ cast_list = db.Table('cast_list',
 class Movie(db.Model):
     #__tablename__ = 'Movies'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, Sequence('movie_id_seq'), primary_key=True)
     title = Column(String, nullable=False)
-    release_date = Column(DateTime, nullable=False, default=datetime.datetime.now)
+    release_date = Column(DateTime, nullable=True, default=datetime.datetime.now)
     actors = db.relationship('Actor', secondary=cast_list, backref=db.backref('movies', lazy=True))
 
     def __init__(self, title, release_date=datetime.datetime.now):
@@ -54,7 +54,7 @@ class Movie(db.Model):
 class Actor(db.Model):
     #__tablename__ = 'Actors'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, Sequence('actor_id_seq'), primary_key=True)
     name = Column(String, nullable=False)
     age = Column(Integer, nullable=False)
     gender = Column(String, nullable=False)
