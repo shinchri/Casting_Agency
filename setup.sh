@@ -1,4 +1,5 @@
 export FLASK_APP=app.py
+export FLASK_ENV=development
 export DATABASE_URL='postgres://postgres@localhost:5432/capstone'
 export DATABASE_URL_TEST='postgres://postgres@localhost:5432/capstone_test'
 
