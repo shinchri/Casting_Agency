@@ -21,6 +21,13 @@ movies = [
     {"title": "Wrath of Man", "release_date": "05-07-2021"},
 ]
 
+CASTING_ASSISTANT = os.environ['CASTING_ASSISTANT']
+CASTING_DIRECTOR = os.environ['CASTING_DIRECTOR']
+EXECUTIVE_PRODUCER = os.environ['EXECUTIVE_PRODUCER']
+
+def get_token_header(token):
+    return {"Authorization": "Bearer {0}".format(token)}
+
 class CapstoneTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -75,7 +82,7 @@ class CapstoneTestCase(unittest.TestCase):
     """
 
     def test_get_actors(self):
-        res = self.client().get('/actors')
+        res = self.client().get('/actors', headers=get_token_header(CASTING_ASSISTANT))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -84,7 +91,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertTrue(data['actors'])
 
     def test_404_invalid_page_actors(self):
-        res = self.client().get('/actors?page=2')
+        res = self.client().get('/actors?page=2', headers=get_token_header(CASTING_ASSISTANT))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
@@ -92,7 +99,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertFalse(data['success'])
 
     def test_405_making_post_request_on_get_actors(self):
-        res = self.client().post('/actors')
+        res = self.client().post('/actors', headers=get_token_header(CASTING_DIRECTOR))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 405)
@@ -100,7 +107,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertFalse(data['success'])
 
     def test_get_movies(self):
-        res = self.client().get('/movies')
+        res = self.client().get('/movies', headers=get_token_header(CASTING_DIRECTOR))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -109,7 +116,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertTrue(data['movies'])
 
     def test_404_invalid_page_movies(self):
-        res = self.client().get('/movies?page=2')
+        res = self.client().get('/movies?page=2', headers=get_token_header(CASTING_DIRECTOR))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
@@ -117,7 +124,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertFalse(data['success'])
 
     def test_405_making_delete_request_on_get_movies(self):
-        res = self.client().delete('/movies')
+        res = self.client().delete('/movies', headers=get_token_header(EXECUTIVE_PRODUCER))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 405)
@@ -125,7 +132,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertFalse(data['success'])
 
     def test_delete_actors(self):
-        res = self.client().delete('/actors/2/delete')
+        res = self.client().delete('/actors/2/delete', headers=get_token_header(EXECUTIVE_PRODUCER))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -133,7 +140,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertTrue(data['success'])
 
     def test_404_delete_none_existing_actor(self):
-        res = self.client().delete('/actors/10/delete')
+        res = self.client().delete('/actors/10/delete', headers=get_token_header(EXECUTIVE_PRODUCER))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
@@ -141,7 +148,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertFalse(data['success'])
 
     def test_delete_movies(self):
-        res = self.client().delete('/movies/2/delete')
+        res = self.client().delete('/movies/2/delete', headers=get_token_header(EXECUTIVE_PRODUCER))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -149,7 +156,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertTrue(data['success'])
 
     def test_405_making_get_request_for_delete(self):
-        res = self.client().get('/movies/3/delete')
+        res = self.client().get('/movies/3/delete', headers=get_token_header(EXECUTIVE_PRODUCER))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 405)
@@ -157,7 +164,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertFalse(data['success'])
 
     def test_create_actor(self):
-        res = self.client().post('/actors/create', json=self.new_actor)
+        res = self.client().post('/actors/create', json=self.new_actor, headers=get_token_header(EXECUTIVE_PRODUCER))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -165,7 +172,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertTrue(data['success'])
 
     def test_422_invalid_json_for_actor(self):
-        res = self.client().post('/actors/create', json={"title": "Romeo"})
+        res = self.client().post('/actors/create', json={"title": "Romeo"}, headers=get_token_header(EXECUTIVE_PRODUCER))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 422)
@@ -173,7 +180,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertFalse(data['success'])
 
     def test_create_movie(self):
-        res = self.client().post('/movies/create', json=self.new_movie)
+        res = self.client().post('/movies/create', json=self.new_movie , headers=get_token_header(EXECUTIVE_PRODUCER))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -181,7 +188,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertTrue(data['success'])
 
     def test_422_invalid_json_for_movie(self):
-        res = self.client().post('/movies/create', json={"titles": "titles"}) 
+        res = self.client().post('/movies/create', json={"titles": "titles"}, headers=get_token_header(EXECUTIVE_PRODUCER)) 
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 422)
@@ -189,7 +196,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertFalse(data['success'])
 
     def test_edit_actor(self):
-        res = self.client().patch('/actors/1/edit', json={'name':"Santa", "age":11})
+        res = self.client().patch('/actors/1/edit', json={'name':"Santa", "age":11}, headers=get_token_header(EXECUTIVE_PRODUCER))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -202,7 +209,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertTrue(data['success'])
 
     def test_404_edit_invalid_actor(self):
-        res = self.client().patch('/actors/11/edit', json={'name':"Santa", "age":11})
+        res = self.client().patch('/actors/11/edit', json={'name':"Santa", "age":11}, headers=get_token_header(EXECUTIVE_PRODUCER))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
@@ -210,7 +217,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertFalse(data['success'])
 
     def test_edit_movie(self):
-        res = self.client().patch('/movies/4/edit', json={'title':"Jurassic Park 2"})
+        res = self.client().patch('/movies/4/edit', json={'title':"Jurassic Park 2"}, headers=get_token_header(EXECUTIVE_PRODUCER))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -221,7 +228,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertTrue(data['success'])
 
     def test_404_edit_invalid_movie(self):
-        res = self.client().patch('/movies/40/edit', json={'title':"Jurassic Park 2"})
+        res = self.client().patch('/movies/40/edit', json={'title':"Jurassic Park 2"}, headers=get_token_header(EXECUTIVE_PRODUCER))
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)

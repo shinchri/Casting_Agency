@@ -131,7 +131,11 @@ ALTER TABLE ONLY public.movie ALTER COLUMN id SET DEFAULT nextval('public.movie_
 --
 
 COPY public.actor (id, name, age, gender) FROM stdin;
-1	Chris Shin	31	male
+1	Chris	30	male
+2	Lindsey	25	female
+3	Leslie	27	male
+4	Winston	30	male
+5	Jessica	26	female
 \.
 
 
@@ -157,8 +161,10 @@ COPY public.cast_list (movie_id, actor_id) FROM stdin;
 --
 
 COPY public.movie (id, title, release_date) FROM stdin;
-6	Black Widow	2021-07-22 16:01:52.400901
-4	Avator	2020-06-04 00:00:00
+1	Black Widow	2021-07-10 00:00:00
+2	The Boss Baby	2017-03-31 00:00:00
+3	Jurassic Park	1993-06-11 00:00:00
+4	Wrath of Man	2021-05-07 00:00:00
 \.
 
 
@@ -166,14 +172,14 @@ COPY public.movie (id, title, release_date) FROM stdin;
 -- Name: actor_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.actor_id_seq', 2, true);
+SELECT pg_catalog.setval('public.actor_id_seq', 5, true);
 
 
 --
 -- Name: movie_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.movie_id_seq', 6, true);
+SELECT pg_catalog.setval('public.movie_id_seq', 4, true);
 
 
 --
