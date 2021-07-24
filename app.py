@@ -23,7 +23,7 @@ def create_app(test_config=None):
 
     @app.route('/actors', methods=["GET"])
     @requires_auth('get:actors')
-    def get_actors():
+    def get_actors(payload):
         selected_page = request.args.get('page', 1, type=int)
         current_index = selected_page - 1
         actors = Actor.query.order_by(Actor.id).limit(RES_PER_PAGE).offset(current_index*RES_PER_PAGE).all()
@@ -39,7 +39,7 @@ def create_app(test_config=None):
     
     @app.route('/movies', methods=["GET"])
     @requires_auth('get:movies')
-    def get_movies():
+    def get_movies(payload):
         selected_page = request.args.get('page', 1, type=int)
         current_index = selected_page - 1
         movies = Movie.query.order_by(Movie.id).limit(RES_PER_PAGE).offset(current_index*RES_PER_PAGE).all()
@@ -55,7 +55,7 @@ def create_app(test_config=None):
 
     @app.route('/actors/<int:actor_id>/delete', methods=["DELETE"])
     @requires_auth('delete:actors')
-    def delete_actors(actor_id):
+    def delete_actors(payload, actor_id):
         try:
             actor = Actor.query.filter(Actor.id == actor_id).one_or_none()
             if actor == None:
@@ -74,7 +74,7 @@ def create_app(test_config=None):
 
     @app.route('/movies/<int:movie_id>/delete', methods=["DELETE"])
     @requires_auth('delete:movies')
-    def delete_movies(movie_id):
+    def delete_movies(payload,movie_id):
         try:
             movie = Movie.query.filter(Movie.id == movie_id).one_or_none()
             if movie == None:
@@ -93,7 +93,7 @@ def create_app(test_config=None):
 
     @app.route('/actors/create', methods=["POST"])
     @requires_auth('post:actors')
-    def create_actors():
+    def create_actors(payload):
         body = request.get_json()
 
         new_name = body.get('name', None)
@@ -114,7 +114,7 @@ def create_app(test_config=None):
 
     @app.route('/movies/create', methods=["POST"])
     @requires_auth('post:movies')
-    def create_movies():
+    def create_movies(payload):
         body = request.get_json()
 
         new_title = body.get('title', None)
@@ -138,7 +138,7 @@ def create_app(test_config=None):
 
     @app.route('/actors/<int:actor_id>/edit', methods=["PATCH"])
     @requires_auth('patch:actors')
-    def edit_actors(actor_id):
+    def edit_actors(payload, actor_id):
         try:
             actor = Actor.query.filter(Actor.id == actor_id).one_or_none()
             
@@ -165,7 +165,7 @@ def create_app(test_config=None):
 
     @app.route('/movies/<int:movie_id>/edit', methods=["PATCH"])
     @requires_auth('patch:movies')
-    def edit_movies(movie_id):
+    def edit_movies(payload, movie_id):
         
         try:
             movie = Movie.query.filter(Movie.id == movie_id).one_or_none()

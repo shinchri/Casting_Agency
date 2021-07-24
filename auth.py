@@ -1,12 +1,13 @@
 import json
+import os
 from flask import request, _request_ctx_stack
 from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
 
-AUTH0_DOMAIN = ''
+AUTH0_DOMAIN = os.environ['AUTH0_DOMAIN']
 ALGORITHMS = ['RS256']
-API_AUDIENCE = ''
+API_AUDIENCE = os.environ['API_AUDIENCE']
 
 # AuthError
 class AuthError(Exception):
@@ -27,7 +28,7 @@ def get_token_auth_header():
         raise AuthError({
             'code': 'authorization_header_missing',
             'description': 'Authorization header is expected.'
-        })
+        }, 401)
 
     parts = auth.split()
 
