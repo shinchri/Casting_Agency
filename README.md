@@ -47,12 +47,16 @@ $ createdb capstone -U postgres
 ```capstone``` is the name of our database and ```postgres``` is our user.
 
 ##### Populate the database
-```$ psql -U postgres capstone < casting_agency.pgsql```
+```bash
+$ psql -U postgres capstone < casting_agency.pgsql
+```
 
 ##### Destroy a database
 
 Use the below command to destroy the database if needed:
-```$ createdb capstone -U postgres```
+```bash
+$ createdb capstone -U postgres
+```
 
 ### Running the server
 
